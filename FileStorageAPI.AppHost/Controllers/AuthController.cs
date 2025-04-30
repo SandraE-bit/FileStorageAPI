@@ -30,6 +30,7 @@ public class AuthController : ControllerBase
         return Ok("User created");
     }
 
+    
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginDto dto)
     {
