@@ -1,22 +1,29 @@
-﻿
-public class FileService
+﻿public class FileService
 {
     private readonly IFileRepository _fileRepo;
+
     public FileService(IFileRepository fileRepo)
     {
         _fileRepo = fileRepo;
     }
 
     /// <summary>
-    /// Upload a new file
+    /// Upload a new file for a specific user
     /// </summary>
-    public async Task UploadFileAsync(FileItem file)
+    public async Task UploadFileAsync(UploadFileDto dto, string userId)
     {
+        var file = new FileItem
+        {
+            Name = dto.Name,
+            Content = dto.Content,
+            FolderId = dto.FolderId,
+            UserId = userId
+        };
         await _fileRepo.AddAsync(file);
     }
 
     /// <summary>
-    /// Get all files for a user
+    /// Get all files owned by the user
     /// </summary>
     public async Task<IEnumerable<FileItem>> GetFilesForUserAsync(string userId)
     {
@@ -24,10 +31,14 @@ public class FileService
     }
 
     /// <summary>
-    /// Delete a file
+    /// Delete a file by ID for a specific user
     /// </summary>
-    public async Task DeleteFileAsync(FileItem file)
+    public async Task DeleteFileAsync(Guid fileId, string userId)
     {
+        var file = await _fileRepo.GetByIdAsync(fileId, userId);
+        if (file == null)
+            throw new UnauthorizedAccessException("Cannot delete a file you do not own.");
+
         await _fileRepo.DeleteAsync(file);
     }
 }
