@@ -1,15 +1,20 @@
-﻿public class Folder
+﻿using System.ComponentModel.DataAnnotations;
+
+public class Folder
 {
+    [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
 
+    [Required]
     public string Name { get; set; } = string.Empty;
 
-    public string UserId { get; set; } 
+    public Guid? ParentFolderId { get; set; }
 
-    public List<FileItem> Files { get; set; } = new();
+    [Required]
+    public string UserId { get; set; } = string.Empty;
 
-    public List<Folder> SubFolders { get; set; } = new(); 
-
-    public Guid? ParentFolderId { get; set; } 
+    // Optional navigation property for folder hierarchy
     public Folder? ParentFolder { get; set; }
+    public ICollection<Folder>? SubFolders { get; set; }
+    public ICollection<FileItem>? Files { get; set; }
 }

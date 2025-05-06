@@ -21,10 +21,11 @@ public class FileRepository : IFileRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<FileItem?> GetByIdAsync(Guid id, string userId)
+    public async Task<FileItem?> GetByIdAsync(Guid fileId, string userId)
     {
         return await _context.Files
-            .FirstOrDefaultAsync(f => f.Id == id && f.UserId == userId);
+            .Where(f => f.Id == fileId && f.UserId == userId)
+            .FirstOrDefaultAsync();
     }
 
     public async Task<IEnumerable<FileItem>> GetAllByUserAsync(string userId)

@@ -41,4 +41,17 @@
 
         await _fileRepo.DeleteAsync(file);
     }
+
+    /// <summary>
+    /// Get a file by ID if it belongs to the user
+    /// </summary>
+    public async Task<FileItem> GetFileByIdAsync(Guid fileId, string userId)
+    {
+        var file = await _fileRepo.GetByIdAsync(fileId, userId);
+        if (file == null)
+            throw new UnauthorizedAccessException("File not found or not owned by the user.");
+
+        return file;
+    }
+
 }

@@ -22,4 +22,15 @@ public class FileController : ControllerBase
         await _fileService.UploadFileAsync(dto, userId!);
         return Ok();
     }
+
+    [Authorize]
+    [HttpGet("download/{id}")]
+    public async Task<IActionResult> Download(Guid id)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var file = await _fileService.GetFileByIdAsync(id, userId!);
+
+        return File(file.Content, "application/octet-stream", file.Name);
+    }
+
 }
