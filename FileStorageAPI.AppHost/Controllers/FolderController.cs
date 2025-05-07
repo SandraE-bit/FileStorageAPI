@@ -20,7 +20,8 @@ public class FolderController : ControllerBase
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var folderId = await _folderService.CreateFolderAsync(dto, userId!);
-        return Ok(folderId);
+        return Ok(new { folderId });
+
     }
 
 }

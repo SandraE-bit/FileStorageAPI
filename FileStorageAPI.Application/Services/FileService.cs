@@ -66,4 +66,13 @@
         return file;
     }
 
+    /// <summary>
+    /// Get all files for the user that are not in any folder (root-level files)
+    /// </summary>
+    public async Task<IEnumerable<FileItem>> GetRootFilesAsync(string userId)
+    {
+        var allFiles = await _fileRepo.GetAllByUserAsync(userId);
+        return allFiles.Where(f => f.FolderId == null);
+    }
+
 }

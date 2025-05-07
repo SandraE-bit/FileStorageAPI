@@ -34,4 +34,12 @@ public class FileRepository : IFileRepository
             .Where(f => f.UserId == userId)
             .ToListAsync();
     }
+
+    public async Task<IEnumerable<FileItem>> GetRootFilesByUserAsync(string userId)
+    {
+        return await _context.Files
+            .Where(f => f.UserId == userId && f.FolderId == null)
+            .ToListAsync();
+    }
+
 }

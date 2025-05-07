@@ -33,4 +33,13 @@ public class FileController : ControllerBase
         return File(file.Content, "application/octet-stream", file.Name);
     }
 
+    [Authorize]
+    [HttpGet("root")]
+    public async Task<ActionResult<IEnumerable<FileItem>>> GetRootFiles()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var files = await _fileService.GetRootFilesAsync(userId!);
+        return Ok(files);
+    }
+
 }
