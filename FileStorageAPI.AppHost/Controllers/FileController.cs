@@ -42,4 +42,24 @@ public class FileController : ControllerBase
         return Ok(files);
     }
 
+    [Authorize]
+    [HttpDelete("delete/{fileId}")]
+    public async Task<IActionResult> DeleteFile(Guid fileId)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        try
+        {
+            await _fileService.DeleteFileAsync(fileId, userId!);
+            return Ok("File deleted successfully.");
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message); 
+        }
+    }
+
 }
