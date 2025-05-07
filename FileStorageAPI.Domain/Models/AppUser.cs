@@ -3,6 +3,6 @@
 
 public class AppUser : IdentityUser
 {
-    public ICollection<Folder> Folders { get; set; }
-    public ICollection<FileItem> Files { get; set; }
+    public ICollection<Folder>? Folders { get; set; }
+    public ICollection<FileItem>? Files { get; set; }
 }
