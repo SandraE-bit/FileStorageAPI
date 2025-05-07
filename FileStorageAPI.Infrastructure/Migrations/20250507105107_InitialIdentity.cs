@@ -5,7 +5,7 @@
 namespace FileStorageAPI.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateFolderModel : Migration
+    public partial class InitialIdentity : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

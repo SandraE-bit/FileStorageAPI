@@ -1,10 +1,12 @@
 ﻿public class FileService
 {
     private readonly IFileRepository _fileRepo;
+    private readonly IFolderRepository _folderRepo;
 
-    public FileService(IFileRepository fileRepo)
+    public FileService(IFileRepository fileRepo, IFolderRepository folderRepo)
     {
         _fileRepo = fileRepo;
+        _folderRepo = folderRepo;
     }
 
     /// <summary>
@@ -12,15 +14,25 @@
     /// </summary>
     public async Task UploadFileAsync(UploadFileDto dto, string userId)
     {
+        if (dto.FolderId.HasValue)
+        {
+            var folder = await _folderRepo.GetByIdAsync(dto.FolderId.Value, userId);
+            if (folder == null)
+                throw new Exception("Folder does not exist or does not belong to you.");
+        }
+
         var file = new FileItem
         {
             Name = dto.Name,
             Content = dto.Content,
-            FolderId = dto.FolderId,
+            FolderId = dto.FolderId, 
             UserId = userId
         };
+
         await _fileRepo.AddAsync(file);
     }
+
+
 
     /// <summary>
     /// Get all files owned by the user

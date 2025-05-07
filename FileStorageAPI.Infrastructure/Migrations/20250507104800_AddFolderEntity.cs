@@ -5,7 +5,7 @@
 namespace FileStorageAPI.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class RecreateFoldersWithGuid : Migration
+    public partial class AddFolderEntity : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

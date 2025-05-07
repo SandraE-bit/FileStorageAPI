@@ -10,6 +10,10 @@ public class FolderRepository : IFolderRepository
     }
 
     public async Task AddAsync(Folder folder) => await _context.Folders.AddAsync(folder);
-    public async Task<Folder> GetByIdAsync(int id) => await _context.Folders.FindAsync(id);
+    public async Task<Folder?> GetByIdAsync(Guid folderId, string userId)
+    {
+        return await _context.Folders
+            .FirstOrDefaultAsync(f => f.Id == folderId && f.UserId == userId);
+    }
     public async Task<IEnumerable<Folder>> GetAllByUserAsync(string userId) => await _context.Folders.Where(f => f.UserId == userId).ToListAsync();
 }

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FileStorageAPI.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250424055442_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250507123757_MakeFolderIdNullable")]
+    partial class MakeFolderIdNullable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -91,43 +91,19 @@ namespace FileStorageAPI.Infrastructure.Migrations
 
             modelBuilder.Entity("FileItem", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("text");
 
                     b.Property<byte[]>("Content")
                         .IsRequired()
                         .HasColumnType("bytea");
 
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("FolderId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FolderId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Files");
-                });
-
-            modelBuilder.Entity("Folder", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("FolderId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -139,7 +115,38 @@ namespace FileStorageAPI.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("AppUserId");
+
+                    b.HasIndex("FolderId");
+
+                    b.ToTable("Files");
+                });
+
+            modelBuilder.Entity("Folder", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("ParentFolderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.HasIndex("ParentFolderId");
 
                     b.ToTable("Folders");
                 });
@@ -278,32 +285,30 @@ namespace FileStorageAPI.Infrastructure.Migrations
 
             modelBuilder.Entity("FileItem", b =>
                 {
+                    b.HasOne("AppUser", null)
+                        .WithMany("Files")
+                        .HasForeignKey("AppUserId");
+
                     b.HasOne("Folder", "Folder")
                         .WithMany("Files")
                         .HasForeignKey("FolderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AppUser", "User")
-                        .WithMany("Files")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Folder");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Folder", b =>
                 {
-                    b.HasOne("AppUser", "User")
+                    b.HasOne("AppUser", null)
                         .WithMany("Folders")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AppUserId");
 
-                    b.Navigation("User");
+                    b.HasOne("Folder", "ParentFolder")
+                        .WithMany("SubFolders")
+                        .HasForeignKey("ParentFolderId");
+
+                    b.Navigation("ParentFolder");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -367,6 +372,8 @@ namespace FileStorageAPI.Infrastructure.Migrations
             modelBuilder.Entity("Folder", b =>
                 {
                     b.Navigation("Files");
+
+                    b.Navigation("SubFolders");
                 });
 #pragma warning restore 612, 618
         }

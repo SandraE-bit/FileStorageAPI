@@ -16,11 +16,11 @@ public class FolderController : ControllerBase
 
     [Authorize]
     [HttpPost("create")]
-    public async Task<IActionResult> Upload([FromBody] CreateFolderDto dto)
+    public async Task<ActionResult<Guid>> Create([FromBody] CreateFolderDto dto)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        await _folderService.CreateFolderAsync(dto, userId!);
-        return Ok();
+        var folderId = await _folderService.CreateFolderAsync(dto, userId!);
+        return Ok(folderId);
     }
 
 }

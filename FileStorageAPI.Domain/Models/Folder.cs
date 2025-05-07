@@ -13,7 +13,6 @@ public class Folder
     [Required]
     public string UserId { get; set; } = string.Empty;
 
-    // Optional navigation property for folder hierarchy
     public Folder? ParentFolder { get; set; }
     public ICollection<Folder>? SubFolders { get; set; }
     public ICollection<FileItem>? Files { get; set; }

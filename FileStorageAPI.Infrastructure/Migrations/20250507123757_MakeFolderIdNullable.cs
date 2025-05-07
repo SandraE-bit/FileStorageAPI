@@ -5,7 +5,7 @@
 namespace FileStorageAPI.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddNameToFileItem : Migration
+    public partial class MakeFolderIdNullable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

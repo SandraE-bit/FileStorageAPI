@@ -8,16 +8,15 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// PostgreSQL
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Identity Core
+
 builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
-// JWT
+
 var jwtKey = builder.Configuration["JwtSettings:SecretKey"];
 var jwtIssuer = builder.Configuration["JwtSettings:Issuer"];
 var jwtAudience = builder.Configuration["JwtSettings:Audience"];
@@ -41,13 +40,13 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Swagger
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(opt =>
 {
     opt.SwaggerDoc("v1", new OpenApiInfo { Title = "FileStorage API", Version = "v1" });
 
-    // Swagger + JWT
+    
     opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -69,7 +68,7 @@ builder.Services.AddSwaggerGen(opt =>
     }});
 });
 
-// Dependency Injection
+
 builder.Services.AddScoped<IFileRepository, FileRepository>();
 builder.Services.AddScoped<IFolderRepository, FolderRepository>();
 builder.Services.AddScoped<FileService>();
@@ -80,7 +79,6 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// Middleware
 app.UseSwagger();
 app.UseSwaggerUI();
 

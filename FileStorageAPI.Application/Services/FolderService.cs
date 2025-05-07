@@ -10,16 +10,17 @@ public class FolderService
     /// <summary>
     /// Create a new folder
     /// </summary>
-    public async Task CreateFolderAsync(CreateFolderDto dto, string userId)
+    public async Task<Guid> CreateFolderAsync(CreateFolderDto dto, string userId)
     {
         var folder = new Folder
         {
             Name = dto.Name,
-            ParentFolderId = dto.ParentFolderId,
-            UserId = userId
+            UserId = userId,
+            ParentFolderId = dto.ParentFolderId
         };
 
         await _folderRepo.AddAsync(folder);
+        return folder.Id;
     }
 
     /// <summary>

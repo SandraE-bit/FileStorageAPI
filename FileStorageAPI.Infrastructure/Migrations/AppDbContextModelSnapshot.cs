@@ -92,11 +92,14 @@ namespace FileStorageAPI.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("text");
+
                     b.Property<byte[]>("Content")
                         .IsRequired()
                         .HasColumnType("bytea");
 
-                    b.Property<Guid?>("FolderId")
+                    b.Property<Guid>("FolderId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Name")
@@ -109,9 +112,9 @@ namespace FileStorageAPI.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FolderId");
+                    b.HasIndex("AppUserId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("FolderId");
 
                     b.ToTable("Files");
                 });
@@ -279,19 +282,17 @@ namespace FileStorageAPI.Infrastructure.Migrations
 
             modelBuilder.Entity("FileItem", b =>
                 {
+                    b.HasOne("AppUser", null)
+                        .WithMany("Files")
+                        .HasForeignKey("AppUserId");
+
                     b.HasOne("Folder", "Folder")
                         .WithMany("Files")
-                        .HasForeignKey("FolderId");
-
-                    b.HasOne("AppUser", "User")
-                        .WithMany("Files")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("FolderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Folder");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Folder", b =>

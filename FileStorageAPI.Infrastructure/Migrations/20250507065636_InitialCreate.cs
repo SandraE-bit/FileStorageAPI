@@ -161,42 +161,46 @@ namespace FileStorageAPI.Infrastructure.Migrations
                 name: "Folders",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    UserId = table.Column<string>(type: "text", nullable: false)
+                    ParentFolderId = table.Column<Guid>(type: "uuid", nullable: true),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    AppUserId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Folders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Folders_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Folders_AspNetUsers_AppUserId",
+                        column: x => x.AppUserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Folders_Folders_ParentFolderId",
+                        column: x => x.ParentFolderId,
+                        principalTable: "Folders",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "Files",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    FileName = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
                     Content = table.Column<byte[]>(type: "bytea", nullable: false),
-                    FolderId = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<string>(type: "text", nullable: false)
+                    FolderId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    AppUserId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Files", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Files_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Files_AspNetUsers_AppUserId",
+                        column: x => x.AppUserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Files_Folders_FolderId",
                         column: x => x.FolderId,
@@ -243,19 +247,24 @@ namespace FileStorageAPI.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Files_AppUserId",
+                table: "Files",
+                column: "AppUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Files_FolderId",
                 table: "Files",
                 column: "FolderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Files_UserId",
-                table: "Files",
-                column: "UserId");
+                name: "IX_Folders_AppUserId",
+                table: "Folders",
+                column: "AppUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Folders_UserId",
+                name: "IX_Folders_ParentFolderId",
                 table: "Folders",
-                column: "UserId");
+                column: "ParentFolderId");
         }
 
         /// <inheritdoc />

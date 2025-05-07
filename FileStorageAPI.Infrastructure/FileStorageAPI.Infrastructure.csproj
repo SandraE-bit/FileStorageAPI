@@ -24,4 +24,8 @@
     <ProjectReference Include="..\FileStorageAPI.Domain\FileStorageAPI.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>
