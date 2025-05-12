@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FileStorageAPI.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250508071437_MakeFolderIdRequired")]
-    partial class MakeFolderIdRequired
+    [Migration("20250508075956_AddFolderEntity.Designer")]
+    partial class AddFolderEntityDesigner
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

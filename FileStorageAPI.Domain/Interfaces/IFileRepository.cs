@@ -6,6 +6,5 @@ public interface IFileRepository
     Task AddAsync(FileItem file);
     Task DeleteAsync(FileItem file);
     Task<FileItem?> GetByIdAsync(Guid fileId, string userId);
-    Task<IEnumerable<FileItem>> GetRootFilesByUserAsync(string userId);
 
 }

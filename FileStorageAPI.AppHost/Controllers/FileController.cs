@@ -20,7 +20,8 @@ public class FileController : ControllerBase
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         await _fileService.UploadFileAsync(dto, userId!);
-        return Ok();
+        var fileId = await _fileService.UploadFileAsync(dto, userId!);
+        return Ok(new { fileId });
     }
 
     [Authorize]
@@ -31,15 +32,6 @@ public class FileController : ControllerBase
         var file = await _fileService.GetFileByIdAsync(id, userId!);
 
         return File(file.Content, "application/octet-stream", file.Name);
-    }
-
-    [Authorize]
-    [HttpGet("root")]
-    public async Task<ActionResult<IEnumerable<FileItem>>> GetRootFiles()
-    {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var files = await _fileService.GetRootFilesAsync(userId!);
-        return Ok(files);
     }
 
     [Authorize]

@@ -12,7 +12,7 @@ public class FileItem
     public byte[] Content { get; set; } = Array.Empty<byte>();
 
     [Required]
-    public Guid? FolderId { get; set; } 
+    public Guid FolderId { get; set; }
 
     public Folder? Folder { get; set; }
 

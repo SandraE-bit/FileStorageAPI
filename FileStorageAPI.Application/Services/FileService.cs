@@ -12,24 +12,25 @@
     /// <summary>
     /// Upload a new file for a specific user
     /// </summary>
-    public async Task UploadFileAsync(UploadFileDto dto, string userId)
+    public async Task<Guid> UploadFileAsync(UploadFileDto dto, string userId)
     {
-        if (dto.FolderId.HasValue)
-        {
-            var folder = await _folderRepo.GetByIdAsync(dto.FolderId.Value, userId);
-            if (folder == null)
-                throw new Exception("Folder does not exist or does not belong to you.");
-        }
+        if (!dto.FolderId.HasValue)
+            throw new Exception("You must select a folder to upload the file into.");
 
+        var folder = await _folderRepo.GetByIdAsync(dto.FolderId.Value, userId);
+        if (folder == null)
+            throw new Exception("Folder does not exist or does not belong to you.");
+               
         var file = new FileItem
         {
             Name = dto.Name,
             Content = dto.Content,
-            FolderId = dto.FolderId, 
+            FolderId = dto.FolderId.Value,
             UserId = userId
         };
 
         await _fileRepo.AddAsync(file);
+        return file.Id;
     }
 
     /// <summary>
@@ -62,15 +63,6 @@
             throw new UnauthorizedAccessException("File not found or not owned by the user.");
 
         return file;
-    }
-
-    /// <summary>
-    /// Get all files for the user that are not in any folder (root-level files)
-    /// </summary>
-    public async Task<IEnumerable<FileItem>> GetRootFilesAsync(string userId)
-    {
-        var allFiles = await _fileRepo.GetAllByUserAsync(userId);
-        return allFiles.Where(f => f.FolderId == null);
     }
 
 }
