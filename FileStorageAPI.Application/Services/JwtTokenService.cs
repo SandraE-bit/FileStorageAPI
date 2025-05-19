@@ -6,7 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 
 /// <summary>
-/// Service responsible for generating JWT tokens for authenticated users.
+/// Service for generating JWT tokens for authenticated users.
 /// </summary>
 public class JwtTokenService
 {

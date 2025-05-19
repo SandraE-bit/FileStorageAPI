@@ -19,9 +19,15 @@ public class FolderController : ControllerBase
     public async Task<ActionResult<Guid>> Create([FromBody] CreateFolderDto dto)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var folderId = await _folderService.CreateFolderAsync(dto, userId!);
-        return Ok(new { folderId });
 
+        try
+        {
+            var folderId = await _folderService.CreateFolderAsync(dto, userId!);
+            return Ok(new { folderId });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
     }
-
 }

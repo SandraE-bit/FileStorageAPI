@@ -19,9 +19,20 @@ public class FileController : ControllerBase
     public async Task<IActionResult> Upload([FromBody] UploadFileDto dto)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        await _fileService.UploadFileAsync(dto, userId!);
-        var fileId = await _fileService.UploadFileAsync(dto, userId!);
-        return Ok(new { fileId });
+
+        try
+        {
+            var fileId = await _fileService.UploadFileAsync(dto, userId!);
+            return Ok(new { fileId });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
     }
 
     [Authorize]
@@ -29,9 +40,19 @@ public class FileController : ControllerBase
     public async Task<IActionResult> Download(Guid id)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var file = await _fileService.GetFileByIdAsync(id, userId!);
-
-        return File(file.Content, "application/octet-stream", file.Name);
+        try
+        {
+            var file = await _fileService.GetFileByIdAsync(id, userId!);
+            return File(file.Content, "application/octet-stream", file.Name);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
     }
 
     [Authorize]
